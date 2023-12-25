@@ -1,7 +1,9 @@
 import 'package:chatapp_2/helper/auth_helper.dart';
 import 'package:chatapp_2/helper/firestore_helper.dart';
+import 'package:chatapp_2/helper/local_notification%20helper.dart';
 import 'package:chatapp_2/modals/user_modal.dart';
 import 'package:chatapp_2/utils/current_user_modal.dart';
+import 'package:chatapp_2/utils/date_utils.dart';
 import 'package:chatapp_2/utils/route_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,6 +30,26 @@ class HomePage extends StatelessWidget {
           "Chats",
           style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
         ),
+        actions: [
+          // IconButton(
+          //   onPressed: () {
+          //     LocalNotificationHelper.localNotificationHelper
+          //         .sendMediaNotification(title: 'demo', body: 'this is..');
+          //   },
+          //   icon: Icon(Icons.notification_add),
+          // ),
+          IconButton(
+              onPressed: () {
+                Navigator.pushNamed(context, MyRoutes.star_message_page);
+              },
+              icon: Icon(
+                Icons.star,
+                size: 28,
+              )),
+          SizedBox(
+            width: 5,
+          )
+        ],
         // elevation: 5,
       ),
       drawer: Drawer(
@@ -100,10 +122,21 @@ class HomePage extends StatelessWidget {
             context: context,
             builder: (context) {
               return AlertDialog(
-                title: const Text("Add Friend"),
+                backgroundColor: orangeTheme,
+                contentPadding: EdgeInsetsDirectional.all(0),
+                title: Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: const Text(
+                    "Add Friend",
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
+                ),
                 content: SizedBox(
-                  height: 300,
-                  width: 300,
+                  height: 360,
+                  width: 360,
                   child: StreamBuilder(
                     stream: FireStoreHelper.fireStoreHelper.getAllUsersData(),
                     builder: (context, snapshot2) {
@@ -113,32 +146,62 @@ class HomePage extends StatelessWidget {
                         List<QueryDocumentSnapshot> allData = snap!.docs;
 
                         List<UserModal> allUsers = allData
-                            .map(
-                                (e) => UserModal.fromMap(data: e.data() as Map))
+                            .map((e) => UserModal.fromMap(
+                                data: e.data() as Map<String, dynamic>))
                             .toList();
 
                         allUsers.removeWhere(
                             (element) => element.email == user.email);
                         return Container(
-                          height: 250,
-                          width: 270,
+                          height: 360,
+                          width: 360,
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.white,
+                          ),
                           child: ListView.builder(
                             itemCount: allUsers.length,
                             itemBuilder: (context, index) {
                               UserModal member = allUsers[index];
-                              return ListTile(
-                                onTap: () {
-                                  FireStoreHelper.fireStoreHelper
-                                      .addContact(
-                                          senderEmail: user.email,
-                                          receiverEmail: member.email)
-                                      .then((value) =>
-                                          Navigator.of(context).pop());
-                                },
-                                title: Text(member.email),
-                                leading: CircleAvatar(
-                                  foregroundImage:
-                                      NetworkImage(member.profilePic),
+                              return Card(
+                                margin: EdgeInsets.only(top: 14),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    // color: Colors.white,
+                                    border: Border.all(
+                                      color: Colors.grey.withOpacity(0.5),
+                                    ),
+                                  ),
+                                  child: ListTile(
+                                    onTap: () {
+                                      FireStoreHelper.fireStoreHelper
+                                          .addContact(
+                                              senderEmail: user.email,
+                                              receiverEmail: member.email)
+                                          .then((value) =>
+                                              Navigator.of(context).pop());
+                                    },
+                                    title: Text(member.email),
+                                    leading: CircleAvatar(
+                                      foregroundImage:
+                                          NetworkImage(member.profilePic),
+                                    ),
+                                    trailing: Container(
+                                      height: 35,
+                                      width: 35,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: orangeTheme,
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: Icon(
+                                        Icons.add,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               );
                             },
@@ -169,7 +232,7 @@ class HomePage extends StatelessWidget {
         width: s.width,
         margin: EdgeInsetsDirectional.only(top: 20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: whiteTheme,
           borderRadius: BorderRadiusDirectional.only(
             topStart: Radius.circular(30),
             topEnd: Radius.circular(30),
@@ -204,120 +267,249 @@ class HomePage extends StatelessWidget {
                               if (userSnap.hasData) {
                                 DocumentSnapshot? docs = userSnap.data;
                                 UserModal userModal = UserModal.fromMap(
-                                    data: docs!.data() as Map);
+                                    data: docs!.data() as Map<String, dynamic>);
 
                                 return Card(
-                                  color: Colors.white,
                                   margin: EdgeInsets.only(top: 14),
-                                  child: ListTile(
-                                    onTap: () {
-                                      Navigator.of(context).pushNamed(
-                                          MyRoutes.chat_page,
-                                          arguments: userModal);
-                                    },
-                                    leading: CircleAvatar(
-                                      foregroundImage:
-                                          NetworkImage(userModal.profilePic),
-                                    ),
-                                    title: Text(
-                                      userModal.userName,
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.normal),
-                                    ),
-                                    subtitle: StreamBuilder(
-                                      stream: FireStoreHelper.fireStoreHelper
-                                          .getLastMsgAndCounterData(
-                                              receiverEmail: userModal.email,
-                                              sendereEmail:
-                                                  CurrentUser.user.email),
-                                      builder: (context, lastMsgSnapshot) {
-                                        if (lastMsgSnapshot.hasData) {
-                                          DocumentSnapshot<Map<String, dynamic>>
-                                              snaps2 = lastMsgSnapshot.data!;
-                                          Map<String, dynamic> lastMsgData =
-                                              snaps2.data() ?? {};
-                                          return lastMsgData.isNotEmpty
-                                              ? Row(
-                                                  children: [
-                                                    lastMsgData['type'] ==
-                                                            "sent"
-                                                        ? Icon(Icons.done_all,
-                                                            size: 20,
-                                                            color: (lastMsgData[
-                                                                        'counter'] ==
-                                                                    0)
-                                                                ? orangeTheme
-                                                                : Colors.grey)
-                                                        : SizedBox(),
-                                                    const Gap(5),
-                                                    Expanded(
-                                                      child: Text(
-                                                        lastMsgData['lastMsg'],
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 2,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        // color: Colors.white,
+                                        border: Border.all(
+                                          color: Colors.grey.withOpacity(0.5),
+                                        )),
+                                    child: ListTile(
+                                      onTap: () {
+                                        Navigator.of(context).pushNamed(
+                                            MyRoutes.chat_page,
+                                            arguments: userModal);
+                                      },
+                                      leading: CircleAvatar(
+                                        foregroundImage:
+                                            NetworkImage(userModal.profilePic),
+                                      ),
+                                      title: Text(
+                                        userModal.userName,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.normal),
+                                      ),
+                                      subtitle: StreamBuilder(
+                                        stream: FireStoreHelper.fireStoreHelper
+                                            .getLastMsgAndCounterData(
+                                                receiverEmail: userModal.email,
+                                                sendereEmail:
+                                                    CurrentUser.user.email),
+                                        builder: (context, lastMsgSnapshot) {
+                                          if (lastMsgSnapshot.hasData) {
+                                            DocumentSnapshot<
+                                                    Map<String, dynamic>>
+                                                snaps2 = lastMsgSnapshot.data!;
+                                            Map<String, dynamic> lastMsgData =
+                                                snaps2.data() ?? {};
+                                            print(lastMsgData['lastMsg']);
+                                            return lastMsgData.isNotEmpty
+                                                ? Row(
+                                                    children: [
+                                                      lastMsgData['lastMsg'] ==
+                                                              'You Deleted this Message.'
+                                                          ? Icon(
+                                                              Icons.block,
+                                                              size: 20,
+                                                              color:
+                                                                  Colors.grey,
+                                                            )
+                                                          : lastMsgData[
+                                                                      'type'] ==
+                                                                  "sent"
+                                                              ? Icon(
+                                                                  Icons
+                                                                      .done_all,
+                                                                  size: 20,
+                                                                  color: (lastMsgData[
+                                                                              'counter'] ==
+                                                                          0)
+                                                                      ? orangeTheme
+                                                                      : Colors
+                                                                          .grey)
+                                                              : SizedBox(),
+                                                      const Gap(5),
+                                                      Expanded(
+                                                        child: Text(
+                                                          lastMsgData[
+                                                              'lastMsg'],
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 2,
+                                                          style: TextStyle(
+                                                              fontStyle: lastMsgData[
+                                                                          'lastMsg'] ==
+                                                                      'You Deleted this Message.'
+                                                                  ? FontStyle
+                                                                      .italic
+                                                                  : null),
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                )
-                                              : Text(
+                                                    ],
+                                                  )
+                                                : Text(
+                                                    "Click here to start Chat..!",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        color: Colors.grey),
+                                                  );
+                                          } else {
+                                            return Text(
+                                              "Click here to start Chat..!",
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey),
+                                            );
+                                          }
+                                        },
+                                      ),
+                                      trailing: Column(
+                                        children: [
+                                          StreamBuilder(
+                                            stream: FireStoreHelper
+                                                .fireStoreHelper
+                                                .getLastMsgAndCounterData(
+                                                    receiverEmail:
+                                                        userModal.email,
+                                                    sendereEmail:
+                                                        CurrentUser.user.email),
+                                            builder: (context, timeSnapshot) {
+                                              if (timeSnapshot.hasData) {
+                                                DocumentSnapshot<
+                                                        Map<String, dynamic>>
+                                                    snaps2 = timeSnapshot.data!;
+                                                Map<String, dynamic>
+                                                    timeMsgData =
+                                                    snaps2.data() ?? {};
+                                                if (timeMsgData.isNotEmpty) {
+                                                  DateTime dt = DateTime
+                                                      .fromMillisecondsSinceEpoch(
+                                                    int.parse(
+                                                        timeMsgData['time']),
+                                                  );
+
+                                                  Duration day = DateTime.now()
+                                                      .difference(dt);
+                                                  String date = "";
+                                                  if (day.inDays > 0) {
+                                                    print(
+                                                        "Day: $day :days : ${day.inDays}");
+                                                    if (day.inDays == 1) {
+                                                      date = "YesterDay";
+                                                    } else if (day.inDays >=
+                                                            2 &&
+                                                        day.inDays <= 7) {
+                                                      date = getWeekDay(
+                                                          day: dt.weekday);
+                                                    } else {
+                                                      date = "${dt.day}"
+                                                              .padLeft(2, "0") +
+                                                          "/" +
+                                                          "${dt.month}"
+                                                              .padLeft(2, "0") +
+                                                          "/" +
+                                                          "${dt.year}";
+                                                    }
+                                                  } else if (int.parse(day
+                                                          .inHours
+                                                          .toString()) >
+                                                      DateTime.now().hour) {
+                                                    date = "YesterDay";
+                                                  } else {
+                                                    date = "${dt.hour % 12 == 0 ? 12 : dt.hour % 12}"
+                                                            .padLeft(2, "0") +
+                                                        ":" +
+                                                        "${dt.minute}"
+                                                            .padLeft(2, "0") +
+                                                        " " +
+                                                        "${(dt.hour > 12) ? "PM" : "Am"}";
+                                                  }
+                                                  return Text(date,
+                                                      style: TextStyle(
+                                                          fontSize: 12,
+                                                          color: Colors.grey));
+                                                } else {
+                                                  return Text(
+                                                    "",
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        color: Colors.grey),
+                                                  );
+                                                }
+                                                ;
+                                              } else {
+                                                return Text(
                                                   "Click here to start Chat..!",
                                                   style: TextStyle(
                                                       fontSize: 12,
                                                       color: Colors.grey),
                                                 );
-                                        } else {
-                                          return Text(
-                                            "Click here to start Chat..!",
-                                            style: TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.grey),
-                                          );
-                                        }
-                                      },
-                                    ),
-                                    trailing: StreamBuilder(
-                                      stream: FireStoreHelper.fireStoreHelper
-                                          .getLastMsgAndCounterData(
-                                              receiverEmail: userModal.email,
-                                              sendereEmail:
-                                                  CurrentUser.user.email),
-                                      builder: (context, lastMsgSnapshot) {
-                                        if (lastMsgSnapshot.hasData) {
-                                          DocumentSnapshot<Map<String, dynamic>>
-                                              snaps2 = lastMsgSnapshot.data!;
-                                          Map<String, dynamic> lastMsgData =
-                                              snaps2.data() ?? {};
-                                          return (lastMsgData.isNotEmpty)
-                                              ? (lastMsgData['counter'] == 0 ||
-                                                      lastMsgData['type'] ==
-                                                          'sent')
-                                                  ? SizedBox()
-                                                  : Container(
-                                                      height: 25,
-                                                      width: 25,
-                                                      decoration: BoxDecoration(
-                                                          shape:
-                                                              BoxShape.circle,
-                                                          color: orangeTheme),
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child: Text(
-                                                        lastMsgData['counter']
-                                                            .toString(),
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold),
-                                                      ),
-                                                    )
-                                              : SizedBox();
-                                        } else {
-                                          return SizedBox();
-                                        }
-                                      },
+                                              }
+                                            },
+                                          ),
+                                          const Gap(8),
+                                          StreamBuilder(
+                                            stream: FireStoreHelper
+                                                .fireStoreHelper
+                                                .getLastMsgAndCounterData(
+                                                    receiverEmail:
+                                                        userModal.email,
+                                                    sendereEmail:
+                                                        CurrentUser.user.email),
+                                            builder:
+                                                (context, lastMsgSnapshot) {
+                                              if (lastMsgSnapshot.hasData) {
+                                                DocumentSnapshot<
+                                                        Map<String, dynamic>>
+                                                    snaps2 =
+                                                    lastMsgSnapshot.data!;
+                                                Map<String, dynamic>
+                                                    lastMsgData =
+                                                    snaps2.data() ?? {};
+                                                return (lastMsgData.isNotEmpty)
+                                                    ? (lastMsgData['counter'] ==
+                                                                0 ||
+                                                            lastMsgData[
+                                                                    'type'] ==
+                                                                'sent')
+                                                        ? SizedBox()
+                                                        : Container(
+                                                            height: 25,
+                                                            width: 25,
+                                                            decoration: BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                color:
+                                                                    orangeTheme),
+                                                            alignment: Alignment
+                                                                .center,
+                                                            child: Text(
+                                                              lastMsgData[
+                                                                      'counter']
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
+                                                            ),
+                                                          )
+                                                    : SizedBox();
+                                              } else {
+                                                return SizedBox();
+                                              }
+                                            },
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 );
@@ -346,11 +538,6 @@ class HomePage extends StatelessWidget {
                                 image: AssetImage('assets/images/noFriend.png'),
                               )),
                             ),
-                            // Text(
-                            //   "No Contacts yet..!!",
-                            //   style:
-                            //       TextStyle(fontSize: 24, color: orangeTheme),
-                            // ),
                             Text(
                               "Click on + button..!!",
                               style: TextStyle(

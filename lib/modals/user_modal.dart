@@ -11,7 +11,7 @@ class UserModal {
     required this.profilePic,
   });
 
-  factory UserModal.fromMap({required Map data}) {
+  factory UserModal.fromMap({required Map<String, dynamic> data}) {
     return UserModal(
         uid: data['uid'],
         userName: data['userName'],

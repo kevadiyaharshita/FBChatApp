@@ -1,17 +1,25 @@
 class ChatModal {
-  String msg, type, status;
+  String msg, type, status, react, star;
   DateTime time;
 
-  ChatModal(this.msg, this.type, this.time, this.status);
+  ChatModal(
+      {required this.msg,
+      required this.type,
+      required this.time,
+      required this.status,
+      required this.react,
+      required this.star});
 
   factory ChatModal.fromMap({required Map data}) {
     return ChatModal(
-      data['msg'],
-      data['type'],
-      DateTime.fromMillisecondsSinceEpoch(
+      msg: data['msg'],
+      type: data['type'],
+      time: DateTime.fromMillisecondsSinceEpoch(
         int.parse(data['time']),
       ),
-      data['status'],
+      status: data['status'],
+      react: data['react'],
+      star: data['star'],
     );
   }
 
@@ -19,6 +27,8 @@ class ChatModal {
         'msg': msg,
         'type': type,
         'time': time.millisecondsSinceEpoch.toString(),
-        'status': status
+        'status': status,
+        'react': react,
+        'star': star
       };
 }

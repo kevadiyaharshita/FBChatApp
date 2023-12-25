@@ -4,26 +4,35 @@ import 'package:chatapp_2/helper/firestore_helper.dart';
 import 'package:chatapp_2/utils/color_utils.dart';
 import 'package:chatapp_2/utils/route_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:logger/logger.dart';
 import '../../modals/user_modal.dart';
 import '../../utils/current_user_modal.dart';
 
 class UpdateProfile extends StatelessWidget {
-  const UpdateProfile({super.key});
+  UpdateProfile({super.key});
+
+  TextEditingController userNameController = TextEditingController(
+      text: CurrentUser.user.userName == 'NULL'
+          ? 'UserName'
+          : CurrentUser.user.userName);
+  String imageUrl = CurrentUser.user.profilePic ==
+          'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png'
+      ? ''
+      : CurrentUser.user.profilePic;
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  RxString imagePath = "".obs;
+  File? image;
 
   @override
   Widget build(BuildContext context) {
-    User? user = AuthHelper.authHelper.firebaseAuth.currentUser;
-    TextEditingController userNameController =
-        TextEditingController(text: CurrentUser.user.userName ?? "");
-    GlobalKey<FormState> formKey = GlobalKey<FormState>();
     Size s = MediaQuery.of(context).size;
-    RxString imagePath = "".obs;
-    File? image;
+    User? user = AuthHelper.authHelper.firebaseAuth.currentUser;
 
     return GestureDetector(
       onTap: () {
@@ -53,37 +62,62 @@ class UpdateProfile extends StatelessWidget {
                                 ),
                               ),
                               const Gap(30),
-                              Obx(
-                                () => Container(
-                                  width: 200,
-                                  height: 200,
-                                  decoration: BoxDecoration(
-                                    image: (imagePath != "")
-                                        ? DecorationImage(
-                                            image: FileImage(
-                                                File(imagePath.value)),
-                                            fit: BoxFit.cover,
+                              (imageUrl == '')
+                                  ? Obx(
+                                      () => Container(
+                                        width: 200,
+                                        height: 200,
+                                        decoration: BoxDecoration(
+                                          image: (imageUrl == '')
+                                              ? (imagePath != "")
+                                                  ? DecorationImage(
+                                                      image: FileImage(File(
+                                                          imagePath.value)),
+                                                      fit: BoxFit.cover,
+                                                    )
+                                                  : null
+                                              : DecorationImage(
+                                                  image: NetworkImage(imageUrl),
+                                                  fit: BoxFit.cover),
+                                          shape: BoxShape.circle,
+                                          color: whiteTheme,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.grey,
+                                              blurRadius: 5,
+                                              offset: Offset(2, 2),
+                                            )
+                                          ],
+                                        ),
+                                        child: (imageUrl == '')
+                                            ? (imagePath.value == "")
+                                                ? Icon(
+                                                    CupertinoIcons.person_solid,
+                                                    color: orangeTheme,
+                                                    size: 180,
+                                                  )
+                                                : null
+                                            : null,
+                                      ),
+                                    )
+                                  : Container(
+                                      width: 200,
+                                      height: 200,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                            image: NetworkImage(imageUrl),
+                                            fit: BoxFit.cover),
+                                        shape: BoxShape.circle,
+                                        color: whiteTheme,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey,
+                                            blurRadius: 5,
+                                            offset: Offset(2, 2),
                                           )
-                                        : null,
-                                    shape: BoxShape.circle,
-                                    color: whiteTheme,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey,
-                                        blurRadius: 5,
-                                        offset: Offset(2, 2),
-                                      )
-                                    ],
-                                  ),
-                                  child: (imagePath.value == "")
-                                      ? Icon(
-                                          CupertinoIcons.person_solid,
-                                          color: orangeTheme,
-                                          size: 180,
-                                        )
-                                      : null,
-                                ),
-                              ),
+                                        ],
+                                      ),
+                                    ),
                               const SizedBox(
                                 height: 5,
                               ),
@@ -92,22 +126,17 @@ class UpdateProfile extends StatelessWidget {
                                 onPressed: () {
                                   ImagePicker picker = ImagePicker();
                                   XFile? file;
-
                                   showDialog(
                                     context: context,
                                     builder: (context) => AlertDialog(
                                       title: Text("Pick Image"),
-                                      // backgroundColor: Six_Blue,
-
                                       content: Text(
                                           "Choose the sourse for your image"),
                                       actions: [
                                         ElevatedButton(
                                           onPressed: () async {
-                                            print("Presed...cmer");
                                             file = await picker.pickImage(
                                                 source: ImageSource.camera);
-
                                             if (file != null) {
                                               image = File(file!.path);
                                               imagePath(file!.path);
@@ -120,13 +149,35 @@ class UpdateProfile extends StatelessWidget {
                                         ),
                                         ElevatedButton(
                                           onPressed: () async {
-                                            print("Presed...galary");
+                                            FirebaseStorage _storage =
+                                                FirebaseStorage.instance;
                                             file = await picker.pickImage(
                                                 source: ImageSource.gallery);
-
                                             if (file != null) {
                                               image = File(file!.path);
                                               imagePath(file!.path);
+                                              String path =
+                                                  'profileimages/${file!.name}';
+
+                                              Reference ref = FirebaseStorage
+                                                  .instance
+                                                  .ref()
+                                                  .child(path);
+                                              UploadTask uploadTask =
+                                                  ref.putFile(image!);
+
+                                              TaskSnapshot snasps =
+                                                  await uploadTask!
+                                                      .whenComplete(() {});
+
+                                              String urlDoenload = await snasps
+                                                  .ref
+                                                  .getDownloadURL();
+                                              Logger loggger = Logger();
+
+                                              imageUrl = urlDoenload;
+
+                                              loggger.i("Image : $imageUrl");
                                             }
 
                                             Navigator.of(context).pop();
@@ -184,10 +235,12 @@ class UpdateProfile extends StatelessWidget {
                                 child: InkWell(
                                   onTap: () async {
                                     if (userNameController.text != "") {
+                                      Logger logger = Logger();
+                                      // logger.e("Image url : ${imageUrl}");
                                       await FireStoreHelper.fireStoreHelper
                                           .updateProfile(
-                                              userName: userNameController
-                                                  .text.capitalizeFirst!)
+                                              userName: userNameController.text,
+                                              imageUrl: imageUrl)
                                           .then((value) async {
                                         UserModal userModal =
                                             await FireStoreHelper
@@ -196,6 +249,7 @@ class UpdateProfile extends StatelessWidget {
                                                     email:
                                                         user!.email as String);
                                         CurrentUser.user = userModal;
+                                        // print("Profile Updated...");
                                         return Navigator.of(context)
                                             .pushReplacementNamed(
                                                 MyRoutes.home);
@@ -251,13 +305,11 @@ class UpdateProfile extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            "𝕾𝖔𝖈𝖎𝖆𝖑.",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 60,
-                                color: Colors.white),
-                          )
+                          Image.asset(
+                            'assets/images/NewLogo.png',
+                            scale: 2.5,
+                            color: Colors.white,
+                          ),
                         ],
                       ),
                     ),

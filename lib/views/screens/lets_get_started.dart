@@ -17,14 +17,19 @@ class LetsGetStarted extends StatelessWidget {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                const Gap(30),
-                Image.asset(
-                  'assets/images/logowithname.png',
-                  scale: 1.5,
-                ),
                 const Gap(10),
-                Image.asset('assets/images/letsgetstated.png'),
-                const Gap(20),
+                Image.asset(
+                  'assets/images/NewLogo.png',
+                  scale: 3.1,
+                ),
+                const Gap(50),
+                Transform.scale(
+                  scale: 1.2,
+                  child: Image.asset(
+                    'assets/images/Newfirstpage.png',
+                  ),
+                ),
+                const Gap(50),
                 Row(
                   children: [
                     Spacer(),
