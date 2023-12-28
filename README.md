@@ -1,5 +1,6 @@
 # Project Definition: Chat App (Firebase Miner)
 
+
 <b>Project Description:</b>
 <p>"Firebase Miner (Chat App)" is an innovative and secure mobile application developed using
 Flutter, aiming to provide users with a seamless two-way communication platform. The app
@@ -21,7 +22,6 @@ ProfilePage: The app includes a dedicated ProfilePage where users can view and m
 profile information. Users can see their display name, profile picture, and other relevant details.
 Additionally, they can update their profile information, allowing for a personalized user
 experience.</p>
-
 
 
 https://github.com/kevadiyaharshita/FBChatApp/assets/133105068/bb002660-d4b4-49a4-8ddd-3dc792474f12
