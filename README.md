@@ -23,6 +23,31 @@ profile information. Users can see their display name, profile picture, and othe
 Additionally, they can update their profile information, allowing for a personalized user
 experience.</p>
 
+<h6>ProfilePage:</h6><p> The app includes a dedicated ProfilePage where users can view and manage their
+profile information. Users can see their display name, profile picture, and other relevant details.
+Additionally, they can update their profile information, allowing for a personalized user
+experience.</p>
+
+<h6>Light & Dark Themes:</h6> <p>"Firebase Miner (Chat App)" provides users with the flexibility to
+choose between light and dark themes based on their preferences. This feature enhances user
+comfort and usability, adapting the app's appearance to different lighting conditions.</p>
+
+<h6>Splash Screen:</h6> <p>The app features an eye-catching and welcoming splash screen that greets users
+upon launching the app. The splash screen can showcase the app logo, a captivating animation,
+or an engaging message, setting the tone for a delightful user experience.
+ChatPage for Each User: The core functionality of the app revolves around ChatPages for each
+user. Users can view their chats with other users in real time, facilitating instant communication.
+The ChatPage provides a user-friendly interface to send and receive messages, ensuring efficient
+and engaging conversations.</p>
+
+<b>Project Technologies:</b>
+- Dart language
+- Flutter framework with MVC and Provider/GetX architecture
+
+
+
+https://github.com/kevadiyaharshita/FBChatApp/assets/133105068/034165cf-66e1-455b-83de-192b954ac0e8
+
 
 https://github.com/kevadiyaharshita/FBChatApp/assets/133105068/bb002660-d4b4-49a4-8ddd-3dc792474f12
 
