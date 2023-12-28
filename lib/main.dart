@@ -19,9 +19,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'controller/theme_controller.dart';
 import 'firebase_options.dart';
 import 'helper/firestore_helper.dart';
 import 'modals/user_modal.dart';
+import 'package:get/get.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,15 +39,20 @@ Future<void> main() async {
   }
 
   await LocalNotificationHelper.localNotificationHelper.initNotification();
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+
+  ThemeController themeController =
+      Get.put(ThemeController(preferences: preferences));
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (context) => DateLabelController(),
-        ),
-      ],
-      child: MyApp(),
-    ),
+    MyApp(),
+    // MultiProvider(
+    //   providers: [
+    //     ChangeNotifierProvider(
+    //       create: (context) => DateLabelController(),
+    //     ),
+    //   ],
+    //   child: MyApp(),
+    // ),
   );
 }
 
@@ -54,18 +62,14 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         colorSchemeSeed: orangeTheme,
-        // colorScheme: ColorScheme.fromSeed(seedColor: orangeTheme),
         useMaterial3: true,
       ),
       initialRoute: MyRoutes.splash_screen,
-      // initialRoute: (AuthHelper.authHelper.firebaseAuth.currentUser != null)
-      //     ? MyRoutes.home
-      //     : MyRoutes.lets_get_started_page,
       routes: {
         // MyRoutes.Splash_Screen: (cnt) => SplashScreen(),
         MyRoutes.home: (context) => HomePage(),

@@ -10,7 +10,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:logger/logger.dart';
-
+import 'package:get/get.dart';
+import '../../controller/theme_controller.dart';
 import '../../modals/chat_modal.dart';
 import '../../utils/color_utils.dart';
 
@@ -19,6 +20,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController themeController = Get.find<ThemeController>();
     // User? user = AuthHelper.authHelper.firebaseAuth.currentUser!;
     UserModal user = CurrentUser.user;
     Size s = MediaQuery.of(context).size;
@@ -91,6 +93,39 @@ class HomePage extends StatelessWidget {
                 )
               ],
             ),
+            Obx(() {
+              return Row(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      themeController.changeTheme();
+                      themeController.getTheme
+                          ? Get.changeTheme(ThemeData.dark(useMaterial3: true))
+                          : Get.changeTheme(
+                              ThemeData.light(useMaterial3: true));
+                    },
+                    icon: themeController.getTheme
+                        ? Icon(
+                            Icons.light_mode_outlined,
+                            color: orangeTheme,
+                            size: 30,
+                          )
+                        : Icon(
+                            Icons.light_mode_rounded,
+                            color: orangeTheme,
+                            size: 30,
+                          ),
+                  ),
+                  Text(
+                    themeController.getTheme ? "Light Theme" : "Dark Theme",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        color: orangeTheme),
+                  )
+                ],
+              );
+            }),
             Spacer(),
             Row(
               children: [
@@ -158,7 +193,10 @@ class HomePage extends StatelessWidget {
                           padding: EdgeInsets.all(10),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            color: Colors.white,
+                            border: Border.all(width: 3, color: orangeTheme),
+                            color: themeController.getTheme
+                                ? const Color(0xff1C1B1F)
+                                : Colors.white,
                           ),
                           child: ListView.builder(
                             itemCount: allUsers.length,
@@ -232,7 +270,8 @@ class HomePage extends StatelessWidget {
         width: s.width,
         margin: EdgeInsetsDirectional.only(top: 20),
         decoration: BoxDecoration(
-          color: whiteTheme,
+          color:
+              themeController.getTheme ? const Color(0xff1C1B1F) : whiteTheme,
           borderRadius: BorderRadiusDirectional.only(
             topStart: Radius.circular(30),
             topEnd: Radius.circular(30),
@@ -273,11 +312,11 @@ class HomePage extends StatelessWidget {
                                   margin: EdgeInsets.only(top: 14),
                                   child: Container(
                                     decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        // color: Colors.white,
-                                        border: Border.all(
-                                          color: Colors.grey.withOpacity(0.5),
-                                        )),
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: Colors.grey.withOpacity(0.5),
+                                      ),
+                                    ),
                                     child: ListTile(
                                       onTap: () {
                                         Navigator.of(context).pushNamed(

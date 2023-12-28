@@ -5,7 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-
+import 'package:get/get.dart';
+import '../../controller/theme_controller.dart';
 import '../../utils/color_utils.dart';
 import 'chat_page.dart';
 import 'components/date_methods.dart';
@@ -15,6 +16,7 @@ class StarMessagePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeController themeController = Get.find<ThemeController>();
     Size s = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -28,17 +30,18 @@ class StarMessagePage extends StatelessWidget {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          icon: Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back_ios),
         ),
       ),
       backgroundColor: orangeTheme,
       body: Container(
         height: s.height,
         width: s.width,
-        margin: EdgeInsetsDirectional.only(top: 20),
+        margin: const EdgeInsetsDirectional.only(top: 20),
         decoration: BoxDecoration(
-          color: whiteTheme,
-          borderRadius: BorderRadiusDirectional.only(
+          color:
+              themeController.getTheme ? const Color(0xff1C1B1F) : whiteTheme,
+          borderRadius: const BorderRadiusDirectional.only(
             topStart: Radius.circular(30),
             topEnd: Radius.circular(30),
           ),
@@ -75,14 +78,14 @@ class StarMessagePage extends StatelessWidget {
                                   ),
                                   title: (userModal.userName ==
                                           CurrentUser.user.userName)
-                                      ? Text(
+                                      ? const Text(
                                           "You",
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold),
                                         )
                                       : Text(
                                           userModal.userName,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontWeight: FontWeight.bold),
                                         ),
                                   subtitle: SingleChildScrollView(
@@ -158,7 +161,7 @@ class StarMessagePage extends StatelessWidget {
                                                                         .withOpacity(
                                                                             0.4),
                                                               )
-                                                            : SizedBox(),
+                                                            : const SizedBox(),
                                                       ],
                                                     ),
                                                   ],
@@ -167,13 +170,13 @@ class StarMessagePage extends StatelessWidget {
                                             ),
                                           ),
                                         ),
-                                        Gap(60),
+                                        const Gap(60),
                                       ],
                                     ),
                                   ),
                                 );
                               } else {
-                                return Text("No Starred Message..!");
+                                return const Text("No Starred Message..!");
                               }
                             },
                           );
@@ -197,12 +200,12 @@ class StarMessagePage extends StatelessWidget {
                                   color: orangeTheme,
                                   fontWeight: FontWeight.bold),
                             ),
-                            Gap(100),
+                            const Gap(100),
                           ],
                         ),
                       );
               } else {
-                return Text("No Starred Message..!");
+                return const Text("No Starred Message..!");
               }
             },
           ),
