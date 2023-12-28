@@ -34,8 +34,10 @@ comfort and usability, adapting the app's appearance to different lighting condi
 
 <h6>Splash Screen:</h6> <p>The app features an eye-catching and welcoming splash screen that greets users
 upon launching the app. The splash screen can showcase the app logo, a captivating animation,
-or an engaging message, setting the tone for a delightful user experience.
-ChatPage for Each User: The core functionality of the app revolves around ChatPages for each
+or an engaging message, setting the tone for a delightful user experience.</p>
+
+  
+<h6>ChatPage for Each User:</h6> <p>The core functionality of the app revolves around ChatPages for each
 user. Users can view their chats with other users in real time, facilitating instant communication.
 The ChatPage provides a user-friendly interface to send and receive messages, ensuring efficient
 and engaging conversations.</p>
@@ -46,10 +48,12 @@ and engaging conversations.</p>
 
 
 
-https://github.com/kevadiyaharshita/FBChatApp/assets/133105068/034165cf-66e1-455b-83de-192b954ac0e8
+
 
 
 https://github.com/kevadiyaharshita/FBChatApp/assets/133105068/bb002660-d4b4-49a4-8ddd-3dc792474f12
+
+https://github.com/kevadiyaharshita/FBChatApp/assets/133105068/034165cf-66e1-455b-83de-192b954ac0e8
 
 
 <img src="https://github.com/kevadiyaharshita/FBChatApp/assets/133105068/5267cd10-f010-4a17-89ea-4bf6615b3807" width="300px">
@@ -66,6 +70,22 @@ https://github.com/kevadiyaharshita/FBChatApp/assets/133105068/bb002660-d4b4-49a
 <img src="https://github.com/kevadiyaharshita/FBChatApp/assets/133105068/0491415d-ac57-49fc-8c5c-3966e8c22287" width="300px">
 <img src="https://github.com/kevadiyaharshita/FBChatApp/assets/133105068/b03e0032-09fd-487a-a392-41ab9307e39e" width="300px">
 <img src="https://github.com/kevadiyaharshita/FBChatApp/assets/133105068/201252cd-ab3f-43f8-883a-f828bbf667b2" width="300px">
+
+<img src="https://github.com/kevadiyaharshita/FBChatApp/assets/133105068/2e3c6dbe-c3a6-4e1b-9765-f65bc31f25eb" width="300px">
+<img src="https://github.com/kevadiyaharshita/FBChatApp/assets/133105068/0c522882-4de4-4f0f-bda6-b56687b8dcb4" width="300px">
+<img src="https://github.com/kevadiyaharshita/FBChatApp/assets/133105068/10c737e2-2494-4af1-9753-c6c7364a3ec9" width="300px">
+<img src="https://github.com/kevadiyaharshita/FBChatApp/assets/133105068/4ae5d9d7-79bf-489f-98f7-27ccea94ef84" width="300px">
+<img src="https://github.com/kevadiyaharshita/FBChatApp/assets/133105068/13330596-1f9e-4dc6-ac4a-83a7a1cbd3b2" width="300px">
+<img src="https://github.com/kevadiyaharshita/FBChatApp/assets/133105068/bbf9d83f-1f38-49bb-bc06-6d0ed49855c5" width="300px">
+<img src="https://github.com/kevadiyaharshita/FBChatApp/assets/133105068/11773ebd-44fa-46f7-992c-cdd842fd3b1d" width="300px">
+
+
+
+
+
+
+
+
 
 
 
